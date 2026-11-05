@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Zomin Restaurant menu — Uzbek cuisine, Cheonan">
+<title>Zomin Restaurant — Menu</title>
+<style>
+  :root {
+    --bg: #0d3324;
+    --bg-2: #14432f;
+    --card: #174c37;
+    --line: rgba(232, 197, 71, 0.22);
+    --gold: #e8c547;
+    --cream: #f6f1e4;
+    --muted: #b9c9bd;
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: light) {
+    /* The menu is always dark for brand consistency; this keeps the scheme explicit. */
+    :root:not([data-theme="light"]) { color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: linear-gradient(180deg, var(--bg) 0%, #0a281c 100%);
+    background-color: var(--bg);
+    color: var(--cream);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.4;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+  header.hero {
+    text-align: center;
+    padding: 36px 16px 22px;
+  }
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(30px, 8vw, 44px);
+    letter-spacing: 2px;
+    color: var(--gold);
+    font-weight: 800;
+  }
+  .hero .sub {
+    margin: 6px 0 0;
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+  .hero .notice {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--bg);
+    background: var(--gold);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-weight: 600;
+  }
+
+  /* Category navigation: horizontal scroll inside its own strip, page itself never scrolls sideways */
+  nav.cats {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(13, 51, 36, 0.96);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav.cats ul {
+    list-style: none;
+    margin: 0;
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  nav.cats ul::-webkit-scrollbar { display: none; }
+  nav.cats a {
+    display: inline-block;
+    white-space: nowrap;
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--card);
+  }
+  nav.cats a.active {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+    font-weight: 700;
+  }
+
+  main { padding: 8px 16px 24px; max-width: 960px; margin: 0 auto; }
+  section.cat { padding-top: 26px; scroll-margin-top: 64px; }
+  .cat-head { margin: 0 0 14px; }
+  .cat-head h2 {
+    margin: 0;
+    font-size: 22px;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+  .cat-head p {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  @media (min-width: 640px) {
+    .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  }
+  .item {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 13px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .item .info { min-width: 0; flex: 1; }
+  .item .name {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--cream);
+    overflow-wrap: anywhere;
+  }
+  .item .tag {
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--gold);
+    margin-left: 4px;
+  }
+  .item .desc {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+  .item .price {
+    flex: 0 0 auto;
+    text-align: right;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--gold);
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+  .item .price small {
+    display: block;
+    font-weight: 400;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .item .price.ask {
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .item.featured {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, #1d5a41, var(--card));
+  }
+  .item .includes {
+    margin: 6px 0 0;
+    padding-left: 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  footer.contact {
+    border-top: 1px solid var(--line);
+    text-align: center;
+    padding: 28px 16px 40px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  footer.contact a { color: var(--gold); text-decoration: none; }
+  footer.contact .row { margin: 6px 0; }
+  footer.contact .thanks {
+    color: var(--cream);
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>ZOMIN</h1>
+  <p class="sub">Restaurant · Uzbek kitchen</p>
+  <span class="notice">Menu · Ask staff for any item marked "Ask staff"</span>
+</header>
+
+<nav class="cats" aria-label="Menu categories">
+  <ul id="catnav"></ul>
+</nav>
+
+<main id="menu"></main>
+
+<footer class="contact">
+  <p class="thanks">Thank you for dining with us! · 감사합니다 · Спасибо</p>
+  <div class="row"><a href="tel:+827048331959">+82 70-4833-1959</a></div>
+  <div class="row"><a href="https://instagram.com/zominkr" target="_blank" rel="noopener">Instagram: @zominkr</a></div>
+  <div class="row">26, Terminal 4-gil, Dongnam-gu, Cheonan-si, Chungcheongnam-do</div>
+</footer>
+
+<script>
+/* ============================================================
+   CONFIG — edit here
+   ============================================================ */
+const CONFIG = {
+  currency: "₩",              // assumption: prices are KRW (restaurant is in Cheonan, Korea)
+  missingPriceText: "Ask staff"  // shown when price is null (not yet priced / market price)
+};
+
+/* ============================================================
+   MENU DATA — edit here
+   price: number (KRW), or null when the price is missing/unknown
+   unit:  optional text shown under the price, e.g. "1 kg"
+   tag:   optional meat/type shown next to the name, e.g. "beef"
+   ============================================================ */
+const MENU = [
+  {
+    id: "hot", title: "Quyuq taomlar", sub: "Hot dishes",
+    items: [
+      { name: "Ayrim say", tag: "beef", desc: "A traditional Uzbek sweet flatbread, soft and slightly sweet, usually served with tea.", price: null },
+      { name: "Bifshteks", tag: "mixed", desc: "A traditional Uzbek-style beef steak, pan-fried and served with garnish.", price: 12000 },
+      { name: "Manti", tag: "beef", desc: "Traditional Uzbek dumplings with meat, steamed to perfection. (6 pcs)", price: 11000 },
+      { name: "Xonim", tag: "beef", desc: "A traditional Uzbek steamed roll stuffed with minced meat and vegetables, served sliced.", price: 11000 },
+      { name: "Uygur lagman", tag: "beef", desc: "Handmade noodles with stir-fried beef, vegetables and savory sauce.", price: 11000 },
+      { name: "Qovurma lagmon", tag: "beef", desc: "Fried Uzbek-style noodles with beef, vegetables and rich spices.", price: 12000 },
+      { name: "Achiq go'sht", tag: "beef", desc: "Spicy Uzbek meat dish, slow-cooked with rich seasoning and herbs.", price: 14000 },
+      { name: "Kazan kebab", tag: "lamb", desc: "Qozon kabob: Uzbek-style lamb or beef fried in a cauldron with potatoes and spices.", price: 15000 },
+      { name: "Beshbarmoq", tag: "beef", desc: "A traditional nomadic dish of boiled meat served with handmade noodles and broth.", price: null },
+      { name: "Jarovnya", tag: "beef", desc: "Grilled meat served sizzling in a pan with vegetables.", price: 12000 },
+      { name: "Gampan", tag: "beef", desc: "Uzbek-style pilaf with meat, rice, carrots and spices, cooked in layers.", price: 11000 },
+      { name: "Tabaka", tag: "chicken", desc: "Fried whole chicken, pressed flat and cooked until crispy.", price: 12000 },
+      { name: "Bo'yin go'sht", tag: "lamb", desc: "Tender neck meat, slow-cooked with spices and served with garnish.", price: null },
+      { name: "Arabskiy", tag: "beef", desc: "Minced meat wrapped in egg, cooked with vegetables and spices.", price: null },
+      { name: "Gulyash", tag: "beef", desc: "A hearty stew of beef, onions, potatoes and spices, served with bread or garnish.", price: 12000 },
+      { name: "Assorti", tag: "mix", desc: "A special assorted platter with fries, Tabaka chicken, qozon kebab, spicy meat, manti and pilaf.", price: 17000, featured: true },
+      { name: "Qurtoba", tag: "beef", desc: "A traditional Uzbek dish made with bread, meat, onions and yogurt.", price: null },
+      { name: "Tovuq qovurdoq", tag: "chicken", desc: "Fried chicken with potatoes, onions and traditional spices.", price: null },
+      { name: "Qo'y qovurdoq", tag: "lamb", desc: "Fried lamb with potatoes, onions and aromatic spices.", price: null },
+      { name: "Butun tabaka", tag: "chicken", desc: "Whole chicken pressed flat and pan-fried until crispy.", price: null },
+      { name: "Norin", tag: "lamb", desc: "Traditional Uzbek dish of hand-cut noodles mixed with boiled horse or lamb meat.", price: null },
+      { name: "Dolma", tag: "mix", desc: "Grape leaves stuffed with minced meat, rice and herbs.", price: null },
+      { name: "Qovurma manti", tag: "beef", desc: "The fried version of traditional Uzbek dumplings, stuffed with minced meat and onions.", price: null },
+      { name: "Baliq", tag: "fish", desc: "", price: null }
+    ]
+  },
+  {
+    id: "soups", title: "Suyuq taomlar", sub: "Soups",
+    items: [
+      { name: "Ilik sho'rva", tag: "lamb", desc: "", price: 12000 },
+      { name: "Mastava", tag: "beef, rice", desc: "", price: 11000 },
+      { name: "Chuchvara", tag: "beef & lamb", desc: "", price: 12000 },
+      { name: "Dolma", tag: "lamb", desc: "", price: 12000 },
+      { name: "Kazakh soup", tag: "lamb", desc: "", price: 12000 },
+      { name: "Ko'za sho'rva", tag: "lamb", desc: "", price: 12000 }
+    ]
+  },
+  {
+    id: "shashlik", title: "Shashliklar", sub: "Skewers (shashlik)",
+    items: [
+      { name: "Shashlik assorti", tag: "platter", desc: "Kuskavoy (beef), Kuskavoy (lamb), Qiyma (mix), Dollar (mix), vegetable, chicken wing, chicken, liver.", price: 70000, featured: true },
+      { name: "Qiyma", tag: "mix beef/lamb", desc: "", price: 7000 },
+      { name: "Qiyma rulet", tag: "mix beef/lamb", desc: "", price: 8000 },
+      { name: "Kuskavoy qo'y", tag: "lamb", desc: "", price: 9000 },
+      { name: "Kuska mol", tag: "beef", desc: "", price: 9000 },
+      { name: "Dollar", tag: "mix lamb/beef", desc: "", price: 9000 },
+      { name: "Qo'y qovurg'a", tag: "lamb", desc: "", price: 10000 },
+      { name: "Tovuq lahm", tag: "chicken", desc: "", price: 7000 },
+      { name: "Tovuq qanot", tag: "chicken wing", desc: "", price: 7000 },
+      { name: "Steyk", tag: "lamb", desc: "", price: 16000 },
+      { name: "Jigar", tag: "liver", desc: "", price: 7000 }
+    ]
+  },
+  {
+    id: "plov", title: "Plov types", sub: "Plov",
+    items: [
+      { name: "Zakaz osh (lazer)", tag: "", desc: "", price: 95000, unit: "1 kg" },
+      { name: "Devzira osh", tag: "", desc: "", price: 95000, unit: "1 kg" },
+      { name: "Ilik osh", tag: "", desc: "", price: 14000, unit: "450 g" },
+      { name: "Osh", tag: "", desc: "", price: 11000, unit: "400 g" }
+    ]
+  },
+  {
+    id: "tandoor", title: "Tandoor meat", sub: "Tandoor",
+    items: [
+      { name: "Tandir go'sht", tag: "lamb", desc: "", price: null, unit: "1 kg" },
+      { name: "Tandir go'sht", tag: "lamb", desc: "", price: null, unit: "500 g" },
+      { name: "Tandir go'sht", tag: "lamb", desc: "", price: null, unit: "300 g" }
+    ]
+  },
+  {
+    id: "chicken", title: "Fried chicken", sub: "Fried chicken",
+    items: [
+      { name: "Chicken fried", tag: "", desc: "", price: 15000 },
+      { name: "Spicy fried chicken", tag: "", desc: "", price: null }
+    ]
+  },
+  {
+    id: "fastfood", title: "Fast food", sub: "Fast food",
+    items: [
+      { name: "Lavash", tag: "beef / lamb / chicken", desc: "", price: null },
+      { name: "Non kebab", tag: "", desc: "", price: null },
+      { name: "Big Mac", tag: "", desc: "", price: null },
+      { name: "Hot dog", tag: "", desc: "", price: null },
+      { name: "Korolevskiy hot dog", tag: "", desc: "", price: null },
+      { name: "Pizza (Qazi)", tag: "", desc: "", price: null },
+      { name: "Turk kebab", tag: "", desc: "", price: null },
+      { name: "Iskander kebab 0.5", tag: "", desc: "", price: null },
+      { name: "Iskandar kebab", tag: "", desc: "", price: null }
+    ]
+  },
+  {
+    id: "salads", title: "Salad menu", sub: "Salads",
+    items: [
+      { name: "Fresh salad", tag: "", desc: "Cucumber, tomatoes, sweet bell pepper, red onion, fresh herbs (dill, parsley), olive or vegetable oil, salt, black pepper.", price: 6000 },
+      { name: "Achichiq chuchuk", tag: "", desc: "Tomatoes, onions, fresh herbs (dill, parsley, coriander), salt.", price: 6000 },
+      { name: "Мужской салат", tag: "", desc: "Boiled chicken or beef, grated cheese, boiled eggs, marinated or sautéed onions, mayonnaise, salt, black pepper.", price: 9000 },
+      { name: "Olivier", tag: "", desc: "Boiled potatoes, boiled eggs, boiled carrots, cooked chicken or bologna sausage, pickled cucumbers, canned green peas, mayonnaise, salt, black pepper.", price: 9000 },
+      { name: "Spicy salad", tag: "", desc: "Tomatoes, onions, fresh herbs (dill, parsley, coriander), salt.", price: 9000 },
+      { name: "Navruz", tag: "", desc: "", price: 9000 }
+    ]
+  },
+  {
+    id: "non", title: "Non menu", sub: "Bread",
+    items: [
+      { name: "Duxovka (butun)", tag: "", desc: "", price: 4000 },
+      { name: "Qatlama non", tag: "", desc: "", price: null },
+      { name: "Piyozli non", tag: "", desc: "", price: null },
+      { name: "Patir", tag: "", desc: "", price: null },
+      { name: "Tandir non", tag: "", desc: "", price: null },
+      { name: "Buhanka", tag: "", desc: "", price: null }
+    ]
+  },
+  {
+    id: "somsa", title: "Somsa", sub: "Pastries",
+    items: [
+      { name: "Duxovka somsa", tag: "", desc: "", price: null },
+      { name: "Tandir somsa", tag: "", desc: "", price: "4000&5000" },
+      { name: "Perashki", tag: "", desc: "", price: null },
+      { name: "Cheburak", tag: "", desc: "", price: null },
+      { name: "Sosiski v teste", tag: "", desc: "", price: null },
+      { name: "Perashki (duxovka)", tag: "", desc: "", price: null }
+    ]
+  },
+  {
+    id: "tea", title: "Choy (tea)", sub: "Tea & coffee",
+    items: [
+      { name: "Ko'k choy", tag: "green tea", desc: "", price: null },
+      { name: "Qora choy", tag: "black tea", desc: "", price: null },
+      { name: "Limon choy", tag: "lemon tea", desc: "", price: 4000 },
+      { name: "Fruktoviy choy", tag: "fruit tea", desc: "", price: 5000 },
+      { name: "Zanjabil choy", tag: "ginger tea", desc: "", price: null },
+      { name: "Cappuccino", tag: "", desc: "", price: null }
+    ]
+  },
+  {
+    id: "desserts", title: "Shirinliklar", sub: "Desserts",
+    items: [
+      { name: "Medovik", tag: "", desc: "", price: 6000 },
+      { name: "Napaleon", tag: "", desc: "", price: 6000 },
+      { name: "Rulet", tag: "", desc: "", price: 6000 },
+      { name: "Chocolate cake", tag: "", desc: "", price: 6000 },
+      { name: "Birthday cake", tag: "", desc: "", price: null }
+    ]
+  },
+  {
+    id: "drinks", title: "The drinks menu", sub: "Drinks",
+    items: [
+      { name: "Coca-Cola", tag: "1.25 L, classic", desc: "", price: null },
+      { name: "Sprite", tag: "1.5 L, lemon-lime", desc: "", price: null },
+      { name: "Pepsi", tag: "1.25 L / 2 L", desc: "", price: null },
+      { name: "Monster Energy", tag: "original, black can", desc: "", price: null },
+      { name: "Buratino", tag: "", desc: "", price: null },
+      { name: "Duchess", tag: "", desc: "", price: null },
+      { name: "Tarkhun", tag: "", desc: "", price: null },
+      { name: "Mojito", tag: "", desc: "", price: null },
+      { name: "Strawberry", tag: "", desc: "", price: null },
+      { name: "Сочная долина", tag: "", desc: "", price: null },
+      { name: "Bliss", tag: "", desc: "", price: null }
+    ]
+  },
+  {
+    id: "healthy", title: "Healthy drinks", sub: "Healthy drinks",
+    items: [
+      { name: "Classic Mojito", tag: "", desc: "", price: null },
+      { name: "Kampot IL", tag: "", desc: "", price: null },
+      { name: "Ayron", tag: "", desc: "", price: null },
+      { name: "Yogurt", tag: "", desc: "", price: null }
+    ]
+  }
+];
+
+/* ============================================================
+   RENDERING — no need to edit below this line
+   ============================================================ */
+(function () {
+  const menuEl = document.getElementById("menu");
+  const navEl = document.getElementById("catnav");
+
+  function el(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  function priceNode(item) {
+    const wrap = el("div", "price");
+    if (item.price === null || item.price === undefined) {
+      wrap.classList.add("ask");
+      wrap.textContent = CONFIG.missingPriceText;
+    } else if (typeof item.price === "number") {
+      wrap.textContent = CONFIG.currency + item.price.toLocaleString("en-US");
+    } else {
+      // free-text price, e.g. "4000&5000"
+      wrap.textContent = CONFIG.currency + String(item.price).replace(/&/g, " / ");
+    }
+    if (item.unit) wrap.appendChild(el("small", null, item.unit));
+    return wrap;
+  }
+
+  MENU.forEach(function (cat) {
+    // nav chip
+    const li = el("li");
+    const a = el("a", null, cat.title);
+    a.href = "#" + cat.id;
+    a.dataset.target = cat.id;
+    li.appendChild(a);
+    navEl.appendChild(li);
+
+    // section
+    const section = el("section", "cat");
+    section.id = cat.id;
+    const head = el("div", "cat-head");
+    head.appendChild(el("h2", null, cat.title));
+    if (cat.sub) head.appendChild(el("p", null, cat.sub));
+    section.appendChild(head);
+
+    const grid = el("div", "grid");
+    cat.items.forEach(function (item) {
+      const card = el("article", item.featured ? "item featured" : "item");
+      const info = el("div", "info");
+      const name = el("div", "name", item.name);
+      if (item.tag) name.appendChild(el("span", "tag", "· " + item.tag));
+      info.appendChild(name);
+      if (item.desc) info.appendChild(el("p", "desc", item.desc));
+      card.appendChild(info);
+      card.appendChild(priceNode(item));
+      grid.appendChild(card);
+    });
+    section.appendChild(grid);
+    menuEl.appendChild(section);
+  });
+
+  // highlight the category currently on screen
+  if ("IntersectionObserver" in window) {
+    const links = navEl.querySelectorAll("a");
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        links.forEach(function (l) {
+          const on = l.dataset.target === entry.target.id;
+          l.classList.toggle("active", on);
+          if (on) l.scrollIntoView({ block: "nearest", inline: "center" });
+        });
+      });
+    }, { rootMargin: "-40% 0px -55% 0px" });
+    menuEl.querySelectorAll("section.cat").forEach(function (s) { io.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
