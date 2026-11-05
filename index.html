@@ -132,6 +132,16 @@
     gap: 12px;
   }
   .item .info { min-width: 0; flex: 1; }
+  .item .thumb {
+    flex: 0 0 auto;
+    width: 64px; height: 64px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+  }
+  .item .body { display: flex; gap: 12px; align-items: flex-start; min-width: 0; flex: 1; }
+  .item .body .info { min-width: 0; flex: 1; }
   .item .name {
     font-weight: 700;
     font-size: 16px;
@@ -411,6 +421,81 @@ const MENU = [
   }
 ];
 
+/* Photos extracted from the printed menu (key: "<category id>|<item name>") */
+const PHOTOS = {
+ "hot|Bifshteks": "photos/hot-02.jpg",
+ "hot|Manti": "photos/hot-03.jpg",
+ "hot|Xonim": "photos/hot-04.jpg",
+ "hot|Uygur lagman": "photos/hot-05.jpg",
+ "hot|Qovurma lagmon": "photos/hot-06.jpg",
+ "hot|Achiq go'sht": "photos/hot-07.jpg",
+ "hot|Beshbarmoq": "photos/hot-08.jpg",
+ "hot|Gampan": "photos/hot-09.jpg",
+ "hot|Tabaka": "photos/hot-10.jpg",
+ "hot|Bo'yin go'sht": "photos/hot-11.jpg",
+ "hot|Arabskiy": "photos/hot-12.jpg",
+ "hot|Gulyash": "photos/hot-13.jpg",
+ "hot|Assorti": "photos/hot-14.jpg",
+ "hot|Qurtoba": "photos/hot-15.jpg",
+ "hot|Tovuq qovurdoq": "photos/hot-16.jpg",
+ "hot|Qo'y qovurdoq": "photos/hot-17.jpg",
+ "hot|Butun tabaka": "photos/hot-18.jpg",
+ "hot|Norin": "photos/hot-19.jpg",
+ "hot|Dolma": "photos/hot-20.jpg",
+ "hot|Qovurma manti": "photos/hot-21.jpg",
+ "hot|Baliq": "photos/hot-22.jpg",
+ "shashlik|Shashlik assorti": "photos/shashlik-23.jpg",
+ "shashlik|Qiyma": "photos/shashlik-24.jpg",
+ "shashlik|Qiyma rulet": "photos/shashlik-25.jpg",
+ "shashlik|Kuskavoy qo'y": "photos/shashlik-26.jpg",
+ "shashlik|Steyk": "photos/shashlik-27.jpg",
+ "plov|Devzira osh": "photos/plov-28.jpg",
+ "plov|Ilik osh": "photos/plov-29.jpg",
+ "plov|Osh": "photos/plov-30.jpg",
+ "tandoor|Tandir go'sht": "photos/tandoor-31.jpg",
+ "salads|Fresh salad": "photos/salads-32.jpg",
+ "salads|Achichiq chuchuk": "photos/salads-33.jpg",
+ "salads|Мужской салат": "photos/salads-34.jpg",
+ "salads|Olivier": "photos/salads-35.jpg",
+ "salads|Spicy salad": "photos/salads-36.jpg",
+ "non|Duxovka (butun)": "photos/non-37.jpg",
+ "non|Qatlama non": "photos/non-38.jpg",
+ "non|Piyozli non": "photos/non-39.jpg",
+ "non|Patir": "photos/non-40.jpg",
+ "non|Tandir non": "photos/non-41.jpg",
+ "somsa|Duxovka somsa": "photos/somsa-42.jpg",
+ "somsa|Tandir somsa": "photos/somsa-43.jpg",
+ "somsa|Cheburak": "photos/somsa-44.jpg",
+ "somsa|Sosiski v teste": "photos/somsa-45.jpg",
+ "somsa|Perashki (duxovka)": "photos/somsa-46.jpg",
+ "tea|Ko'k choy": "photos/tea-47.jpg",
+ "tea|Limon choy": "photos/tea-48.jpg",
+ "tea|Fruktoviy choy": "photos/tea-49.jpg",
+ "tea|Zanjabil choy": "photos/tea-50.jpg",
+ "tea|Cappuccino": "photos/tea-51.jpg",
+ "desserts|Medovik": "photos/desserts-52.jpg",
+ "desserts|Napaleon": "photos/desserts-53.jpg",
+ "desserts|Chocolate cake": "photos/desserts-54.jpg",
+ "desserts|Rulet": "photos/desserts-55.jpg",
+ "desserts|Birthday cake": "photos/desserts-56.jpg",
+ "fastfood|Lavash": "photos/fastfood-57.jpg",
+ "fastfood|Hot dog": "photos/fastfood-58.jpg",
+ "fastfood|Korolevskiy hot dog": "photos/fastfood-59.jpg",
+ "fastfood|Iskandar kebab": "photos/fastfood-60.jpg",
+ "fastfood|Big Mac": "photos/fastfood-61.jpg",
+ "fastfood|Turk kebab": "photos/fastfood-62.jpg",
+ "fastfood|Iskander kebab 0.5": "photos/fastfood-63.jpg",
+ "chicken|Chicken fried": "photos/chicken-64.jpg",
+ "chicken|Spicy fried chicken": "photos/chicken-65.jpg",
+ "drinks|Pepsi": "photos/drinks-66.jpg",
+ "drinks|Mojito": "photos/drinks-67.jpg",
+ "drinks|Сочная долина": "photos/drinks-68.jpg",
+ "healthy|Kampot IL": "photos/healthy-69.jpg",
+ "fastfood|Pizza (Qazi)": "photos/fastfood-141.jpg",
+ "hot|Jarovnya": "photos/shashlik-139.jpg",
+ "fastfood|Non kebab": "photos/shashlik-140.jpg"
+};
+
 /* ============================================================
    RENDERING — no need to edit below this line
    ============================================================ */
@@ -460,12 +545,22 @@ const MENU = [
     const grid = el("div", "grid");
     cat.items.forEach(function (item) {
       const card = el("article", item.featured ? "item featured" : "item");
+      const body = el("div", "body");
+      const photo = PHOTOS[cat.id + "|" + item.name];
+      if (photo) {
+        const img = el("img", "thumb");
+        img.src = photo;
+        img.alt = item.name;
+        img.loading = "lazy";
+        body.appendChild(img);
+      }
       const info = el("div", "info");
       const name = el("div", "name", item.name);
       if (item.tag) name.appendChild(el("span", "tag", "· " + item.tag));
       info.appendChild(name);
       if (item.desc) info.appendChild(el("p", "desc", item.desc));
-      card.appendChild(info);
+      body.appendChild(info);
+      card.appendChild(body);
       card.appendChild(priceNode(item));
       grid.appendChild(card);
     });
